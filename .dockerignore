@@ -1,0 +1,19 @@
+# Ignore Maven build files
+#target/
+#pom.xml
+#pom.xml.*
+
+# Ignore IntelliJ IDEA project files
+.idea/
+*.iml
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp

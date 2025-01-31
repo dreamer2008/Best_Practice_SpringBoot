@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  service-app:
+    container_name: app
+    build: .
+    environment:
+      # profile
+      #      SPRING_PROFILES_ACTIVE: prod
+      # or
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-mysql:3306/platform?useSSL=false&autoReconnect=true&characterEncoding=utf8
+    depends_on:
+      - db-mysql
+    ports:
+      - "18080:8080"
+    networks:
+      - internal
+
+  db-mysql:
+#    platform: linux/x86_64
+    image: mysql:8.0
+    container_name: db-mysql
+    restart: always
+    privileged: true
+    volumes:
+      # files
+      - /usr/local/docker/mysql/files/:/var/lib/mysql-files/
+      #      # conf
+      #      - /usr/local/docker/mysql/conf/:/etc/mysql/conf.d/
+      #      # data
+      #      - /usr/local/docker/mysql/data/:/var/lib/mysql/
+      #      # log
+      #      - /usr/local/docker/mysql/logs/:/var/log/
+      # init db by order
+      - ./db/:/docker-entrypoint-initdb.d/
+    env_file:
+      - .env.docker
+    environment:
+      TZ : Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: 1qazxsw2
+      MYSQL_DATABASE: platform
+      MYSQL_USER: tom
+      MYSQL_PASSWORD: admin1234
+    ports:
+      - "13306:3306"
+    command:
+      --authentication_policy=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    networks:
+      - internal
+
+networks:
+  internal:
+    name: internal
