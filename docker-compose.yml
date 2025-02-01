@@ -12,12 +12,12 @@ services:
     depends_on:
       - db-mysql
     ports:
-      - "18080:8080"
+      - "18080:80"
     networks:
       - internal
 
   db-mysql:
-#    platform: linux/x86_64
+    platform: linux/x86_64
     image: mysql:8.0
     container_name: db-mysql
     restart: always
