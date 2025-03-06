@@ -33,11 +33,11 @@ on:
 env:
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: demo-repo           # set this to your Amazon ECR repository name
-  ECS_SERVICE: demo-serv                 # set this to your Amazon ECS service name
+  ECS_SERVICE: demo-serv1                # set this to your Amazon ECS service name
   ECS_CLUSTER: demo-cluster                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: https://us-east-1.console.aws.amazon.com/ecs/v2/task-definitions/demo-task/13/json?region=us-east-1 # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: demo-con           # set this to the name of the container in the
+  CONTAINER_NAME: demo-con1           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 
 permissions:
@@ -64,11 +64,16 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      with:
+         version: v0.7.0
+         
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
         ECR_REGISTRY: 975050031348.dkr.ecr.us-east-1.amazonaws.com/demo-repo
-        IMAGE_TAG: latest
+        IMAGE_TAG: latest1
       run: |
         # Build a docker container and
         # push it to ECR so that it can
