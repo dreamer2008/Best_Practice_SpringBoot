@@ -1,5 +1,5 @@
 # Ignore Maven build files
-#target/
+target/
 #pom.xml
 #pom.xml.*
 
