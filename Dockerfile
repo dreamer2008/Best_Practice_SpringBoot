@@ -1,5 +1,8 @@
 FROM eclipse-temurin:21-jdk-alpine
-WORKDIR /app
-COPY target/springboot-bp.jar springboot-bp.jar
+
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+
 EXPOSE 8080
-CMD ["java","-jar","springboot-bp.jar"]
+
+ENTRYPOINT ["java", "-Dspring.profiles.active=production", "-jar", "/app.jar"]
