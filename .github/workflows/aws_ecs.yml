@@ -65,15 +65,13 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-      with:
-         version: v0.7.0
+      uses: docker/setup-buildx-action@v3
          
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
-        ECR_REGISTRY: 975050031348.dkr.ecr.us-east-1.amazonaws.com/demo-repo
-        IMAGE_TAG: latest1
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build a docker container and
         # push it to ECR so that it can
