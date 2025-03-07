@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "demo-c",
-            "image": "975050031348.dkr.ecr.us-east-1.amazonaws.com/demo-repo:latest",
+            "image": "975050031348.dkr.ecr.us-east-1.amazonaws.com/demo-repo:github-ecs",
             "cpu": 0,
             "portMappings": [
                 {
@@ -86,6 +86,5 @@
     },
     "registeredAt": "2025-03-07T14:25:42.364Z",
     "registeredBy": "arn:aws:iam::975050031348:root",
-    "enableFaultInjection": false,
     "tags": []
 }
