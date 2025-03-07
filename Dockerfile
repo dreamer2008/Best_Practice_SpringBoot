@@ -14,7 +14,7 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
 ENV JAVA_OPTS="-Xmx512m -Xms512m"
 
 # Expose the port the application runs on
-EXPOSE 80
+EXPOSE 8080
 
 # Run the JAR file
 ENTRYPOINT ["java", "-jar", "app.jar"]
