@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "demo-c",
-            "image": "975050031348.dkr.ecr.us-east-1.amazonaws.com/demo-repo:github-ecs",
+            "image": "975050031348.dkr.ecr.us-east-1.amazonaws.com/demo-repo:latest",
             "cpu": 0,
             "portMappings": [
                 {
