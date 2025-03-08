@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:975050031348:task-definition/demo-task:14",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:975050031348:task-definition/demo-task:22",
     "containerDefinitions": [
         {
             "name": "demo-c",
@@ -38,7 +38,7 @@
     "family": "demo-task",
     "executionRoleArn": "arn:aws:iam::975050031348:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 14,
+    "revision": 22,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -84,7 +84,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-03-07T14:25:42.364Z",
+    "registeredAt": "2025-03-08T04:01:50.344Z",
     "registeredBy": "arn:aws:iam::975050031348:root",
     "tags": []
 }
