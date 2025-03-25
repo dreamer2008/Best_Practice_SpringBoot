@@ -45,4 +45,21 @@ public class Result<T> {
             .build();
   }
 
+  public static <T> Result<T> success(Integer code, String message, T data){
+    return Result.<T>builder()
+            .code(code)
+            .message(message)
+            .data(data)
+            .build();
+  }
+
+    public static <T> Result<T> fail(Integer code, String message, T data){
+        return Result.<T>builder()
+                .code(code)
+                .message(message)
+                .data(data)
+                .build();
+    }
+
+
 }

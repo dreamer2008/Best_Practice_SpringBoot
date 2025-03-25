@@ -4,12 +4,17 @@ import com.tom.bp.springboot.jpa.validate.EmployeeAddGroup;
 import com.tom.bp.springboot.jpa.validate.EmployeeUpdateGroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 
 @Data
 @Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmployeeDTO {
 
     @NotNull(message = "employee id could not be empty", groups = {EmployeeUpdateGroup.class})
