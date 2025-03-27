@@ -30,6 +30,22 @@ public class MapperTest {
     }
 
     @Test
+    void shouldMapEntityToDTOCorrectly() {
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setFirstName("Bob");
+        employee.setLastName("Johnson");
+        employee.setEmail("bob@test.com");
+
+        EmployeeDTO dto = mapper.toDTO(employee);
+
+        assertEquals(1L, dto.getId());
+        assertEquals("Bob", dto.getFirstName());
+        assertEquals("Johnson", dto.getLastName());
+        assertEquals("bob@test.com", dto.getEmail());
+    }
+
+    @Test
     void shouldMapDTOListToEntityListCorrectly() {
         EmployeeDTO dto1 = new EmployeeDTO();
         dto1.setId(1L);
