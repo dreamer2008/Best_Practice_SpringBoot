@@ -2,8 +2,13 @@ package com.tom.bp.springboot.jpa.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -11,8 +16,12 @@ import java.util.Date;
 
 //@ApiModel("Employee")
 @Entity
-@Data
 @Accessors(chain = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 public class Employee implements Serializable {
 
 //    @ApiModelProperty("id")

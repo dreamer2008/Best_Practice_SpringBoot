@@ -16,10 +16,10 @@ import java.util.Date;
         SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
 //@EnableWebSecurity
 @EnableTransactionManagement
-public class SpringbootJpaApplication {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringbootJpaApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
 

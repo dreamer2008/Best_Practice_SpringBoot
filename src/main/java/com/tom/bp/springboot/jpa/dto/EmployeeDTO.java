@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class EmployeeDTO {
 
-    @NotNull(message = "employee id could not be empty", groups = {EmployeeUpdateGroup.class})
+//    @NotNull(message = "employee id could not be empty", groups = {EmployeeUpdateGroup.class})
     private Long id;
 
     @NotBlank(message = "first name could not be empty", groups = {EmployeeAddGroup.class})

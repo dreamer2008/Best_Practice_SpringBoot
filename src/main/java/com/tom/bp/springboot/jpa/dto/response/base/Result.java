@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 
 /**
  * @author Tom
- *
  */
 @Getter
 @Setter
@@ -16,50 +15,54 @@ import org.springframework.http.HttpStatus;
 @ToString
 public class Result<T> {
 
-  private Integer code;
-  private String message;
+    private Integer code;
+    private String message;
 
-  private T data;
+    private T data;
 
-  public Result() {
-  }
+    public Result() {
+    }
 
-  public Result(Integer code, String message, T data) {
-    this.code = code;
-    this.message = message;
-    this.data = data;
-  }
+    public Result(Integer code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
 
-  public static <T> Result<T> success(T data){
-    return Result.<T>builder()
-        .code(HttpStatus.OK.value())
-        .message("Success")
-        .data(data)
-        .build();
-  }
+    public static <T> Result<T> success(T data) {
+        return Result.<T>builder()
+                .code(HttpStatus.OK.value())
+                .message("Success")
+                .data(data)
+                .build();
+    }
 
-  public static <T> Result<T> success(){
-    return Result.<T>builder()
-            .code(HttpStatus.OK.value())
-            .message("Success")
-            .build();
-  }
+    public static <T> Result<T> success() {
+        return Result.<T>builder()
+                .code(HttpStatus.OK.value())
+                .message("Success")
+                .build();
+    }
 
-  public static <T> Result<T> success(Integer code, String message, T data){
-    return Result.<T>builder()
-            .code(code)
-            .message(message)
-            .data(data)
-            .build();
-  }
-
-    public static <T> Result<T> fail(Integer code, String message, T data){
+    public static <T> Result<T> success(Integer code, String message, T data) {
         return Result.<T>builder()
                 .code(code)
                 .message(message)
                 .data(data)
                 .build();
     }
+
+    public static <T> Result<T> fail(Integer code, String message, T data) {
+        return Result.<T>builder()
+                .code(code)
+                .message(message)
+                .data(data)
+                .build();
+    }
+
+  public static <T> Result<T> fail(Integer code, String message) {
+    return fail(code, message, null);
+  }
 
 
 }

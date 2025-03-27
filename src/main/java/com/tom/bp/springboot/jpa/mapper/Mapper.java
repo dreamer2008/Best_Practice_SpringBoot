@@ -1,4 +1,4 @@
-package com.tom.bp.springboot.jpa.util;
+package com.tom.bp.springboot.jpa.mapper;
 
 import com.tom.bp.springboot.jpa.dto.EmployeeDTO;
 import com.tom.bp.springboot.jpa.model.Employee;

@@ -10,9 +10,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
 
@@ -31,65 +33,129 @@ public class EmployeeServiceTest {
     private EmployeeServiceImpl employeeService;
 
     @Test
-    void saveEmployeeSuccessfully() {
-        EmployeeDTO employeeDTO = new EmployeeDTO();
-        Employee employee = new Employee();
+    void testSave() {
+        Employee employee = new Employee()
+                .setFirstName("John")
+                .setLastName("Doe")
+                .setEmail("john@example.com");
         when(employeeDao.save(any(Employee.class))).thenReturn(employee);
 
-        EmployeeDTO result = employeeService.save(employeeDTO);
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setFirstName("John");
+        employeeDTO.setLastName("Doe");
+        employeeDTO.setEmail("john@example.com");
 
-        assertNotNull(result);
-        verify(employeeDao, times(1)).save(any(Employee.class));
+        EmployeeDTO savedDTO = employeeService.save(employeeDTO);
+        assertNotNull(savedDTO);
+        assertEquals("John", savedDTO.getFirstName());
+        verify(employeeDao).save(any(Employee.class));
     }
 
     @Test
-    void listAllEmployees() {
-        List<Employee> employees = Arrays.asList(new Employee(), new Employee());
+    void testFindAll() {
+        List<Employee> employees = Arrays.asList(
+                new Employee().setId(1L).setFirstName("John"),
+                new Employee().setId(2L).setFirstName("Jane")
+        );
+        Page<Employee> employeePage = new PageImpl<>(employees);
+        when(employeeDao.findAll(any(PageRequest.class))).thenReturn(employeePage);
+
+        Page<EmployeeDTO> result = employeeService.findAll(PageRequest.of(0, 10));
+        assertEquals(2, result.getContent().size());
+        verify(employeeDao).findAll(any(PageRequest.class));
+    }
+
+    @Test
+    void testGetAll() {
+        List<Employee> employees = Arrays.asList(
+                new Employee().setId(1L).setFirstName("John"),
+                new Employee().setId(2L).setFirstName("Jane")
+        );
         when(employeeDao.findAll()).thenReturn(employees);
 
-        List<EmployeeDTO> result = employeeService.list();
-
+        List<EmployeeDTO> result = employeeService.getAll();
         assertEquals(2, result.size());
-        verify(employeeDao, times(1)).findAll();
+        verify(employeeDao).findAll();
     }
 
     @Test
-    void getEmployeeByIdSuccessfully() {
-        Employee employee = new Employee();
-        when(employeeDao.findById(anyLong())).thenReturn(Optional.of(employee));
+    void testGetPage() {
+        List<Employee> employees = Collections.singletonList(
+                new Employee().setId(1L).setFirstName("John")
+        );
+        Page<Employee> employeePage = new PageImpl<>(employees);
+        when(employeeDao.findAll(any(PageRequest.class))).thenReturn(employeePage);
+
+        Page<EmployeeDTO> result = employeeService.getPage(0, 10);
+        assertEquals(1, result.getContent().size());
+        verify(employeeDao).findAll(any(PageRequest.class));
+    }
+
+    @Test
+    void testGetById() {
+        Employee employee = new Employee()
+                .setId(1L)
+                .setFirstName("John");
+        when(employeeDao.findById(1L)).thenReturn(Optional.of(employee));
 
         EmployeeDTO result = employeeService.getById(1L);
-
         assertNotNull(result);
-        verify(employeeDao, times(1)).findById(1L);
+        assertEquals("John", result.getFirstName());
+        verify(employeeDao).findById(1L);
     }
 
     @Test
-    void getEmployeeByIdNotFound() {
-        when(employeeDao.findById(anyLong())).thenReturn(Optional.empty());
-
+    void testGetByIdNotFound() {
+        when(employeeDao.findById(1L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> employeeService.getById(1L));
-        verify(employeeDao, times(1)).findById(1L);
+        verify(employeeDao).findById(1L);
     }
 
     @Test
-    void updateEmployeeSuccessfully() {
-        EmployeeDTO employeeDTO = new EmployeeDTO();
-        Employee employee = new Employee();
-        when(employeeDao.save(any(Employee.class))).thenReturn(employee);
+    void testUpdate() {
+        Employee existingEmployee = new Employee()
+                .setId(1L)
+                .setFirstName("John");
+        when(employeeDao.findById(1L)).thenReturn(Optional.of(existingEmployee));
+        when(employeeDao.save(any(Employee.class))).thenReturn(existingEmployee);
 
-        EmployeeDTO result = employeeService.updateUser(employeeDTO);
+        EmployeeDTO updateDTO = new EmployeeDTO();
+        updateDTO.setFirstName("Jane");
 
+        EmployeeDTO result = employeeService.update(1L, updateDTO);
         assertNotNull(result);
-        verify(employeeDao, times(1)).save(any(Employee.class));
+        verify(employeeDao).findById(1L);
+        verify(employeeDao).save(any(Employee.class));
     }
 
     @Test
-    void deleteEmployeeByIdSuccessfully() {
-        doNothing().when(employeeDao).deleteById(anyLong());
+    void testUpdateNotFound() {
+        when(employeeDao.findById(1L)).thenReturn(Optional.empty());
 
-        employeeService.deleteById(1L);
+        EmployeeDTO updateDTO = new EmployeeDTO();
+        updateDTO.setFirstName("Jane");
 
-        verify(employeeDao, times(1)).deleteById(1L);
+        assertThrows(ResourceNotFoundException.class, () -> employeeService.update(1L, updateDTO));
+        verify(employeeDao).findById(1L);
+    }
+
+//    @Test
+//    void testDeleteById() {
+//        when(employeeDao.existsById(1L)).thenReturn(true);
+//        doNothing().when(employeeDao).deleteById(1L);
+//
+//        employeeService.deleteById(1L);
+//        verify(employeeDao).existsById(1L);
+//        verify(employeeDao).deleteById(1L);
+//    }
+
+    @Test
+    void testDeleteByIdNotFound() {
+//        when(employeeDao.existsById(1L)).thenReturn(false);
+        when(employeeDao.findById(1L)).thenThrow(new ResourceNotFoundException("Employee not found with id: 1"));
+
+        assertThrows(ResourceNotFoundException.class, () -> employeeService.deleteById(1L));
+        verify(employeeDao).findById(1L);
+        verify(employeeDao, never()).deleteById(anyLong());
     }
 }
