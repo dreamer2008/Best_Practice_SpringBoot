@@ -81,6 +81,23 @@ public class EmployeeControllerIT {
     }
 
     @Test
+    void getAllEmployeesWhenNoData() throws Exception {
+        when(employeeService.getAll()).thenReturn(null);
+        mockMvc.perform(get("/api/employees"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+    @Test
+    void getAllEmployeesWhenPageable() throws Exception {
+        when(employeeService.getPage(0, 10)).thenReturn(null);
+        mockMvc.perform(get("/api/employees/page?pageNum=0&pageSize=10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+
+    @Test
     void getEmployeeByIdWhenExists() throws Exception {
         EmployeeDTO employeeDTO = new EmployeeDTO();
         employeeDTO.setId(1L);

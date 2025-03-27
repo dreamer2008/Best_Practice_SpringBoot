@@ -41,7 +41,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Page<EmployeeDTO> findAll(Pageable pageable) {
         Page<Employee> all = employeeDao.findAll(pageable);
         return all.map(employeeMapper::toDTO);
-
     }
 
     @Transactional(readOnly = true)

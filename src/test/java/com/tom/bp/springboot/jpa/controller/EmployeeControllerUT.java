@@ -6,6 +6,8 @@ import com.tom.bp.springboot.jpa.exception.ResourceNotFoundException;
 import com.tom.bp.springboot.jpa.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
@@ -42,6 +44,37 @@ public class EmployeeControllerUT {
         assertEquals(HttpStatus.OK.value(), result.getCode());
         assertTrue(result.getData().isEmpty());
         verify(employeeService, times(1)).getAll();
+    }
+
+    @Test
+    void testGetAllEmployees_WhenData_ReturnListOfEmployees() {
+        // Arrange
+        when(employeeService.getAll()).thenReturn(Collections.singletonList(sampleDTO));
+
+        // Act
+        Result<List<EmployeeDTO>> result = employeeController.getAllEmployees();
+
+        // Assert
+        assertEquals(HttpStatus.OK.value(), result.getCode());
+        assertEquals(1, result.getData().size());
+        assertEquals("John", result.getData().get(0).getFirstName());
+        verify(employeeService, times(1)).getAll();
+    }
+
+    @Test
+    void testGetAllEmployees_WhenData_ReturnListOfEmployeesWithPagination() {
+        // Arrange
+        for (int i = 0; i < 4; i++) {
+            when(employeeService.findAll(PageRequest.of(i, 10))).thenReturn(Page.empty());
+        }
+
+        // Act & Assert
+        for (int i = 0; i < 4; i++) {
+            Result<Page<EmployeeDTO>> result = employeeController.getAllEmployees(i, 10);
+            assertEquals(HttpStatus.OK.value(), result.getCode());
+            assertTrue(result.getData().getContent().isEmpty());
+            verify(employeeService, times(1)).findAll(PageRequest.of(i, 10));
+        }
     }
 
     @Test

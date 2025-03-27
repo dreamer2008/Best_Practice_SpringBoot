@@ -55,9 +55,6 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize) {
         Page<EmployeeDTO> employeeDTOPage = employeeService.findAll(PageRequest.of(pageNum, pageSize));
-        if (employeeDTOPage.isEmpty()) {
-            return Result.fail(HttpStatus.NOT_FOUND.value(), "No employees found", null);
-        }
         return Result.success(employeeDTOPage);
     }
 
@@ -69,7 +66,6 @@ public class EmployeeController {
     @DeleteMapping("/{id}")
 //    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Result<Void> deleteEmployee(@PathVariable Long id) {
-//        int i = 1 / 0;
         employeeService.deleteById(id);
         return Result.fail(HttpStatus.NO_CONTENT.value(), "Success", null);
     }
