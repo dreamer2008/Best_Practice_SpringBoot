@@ -1,10 +1,8 @@
 package com.tom.bp.springboot.jpa.exception;
 
 import com.tom.bp.springboot.jpa.dto.response.base.Result;
-import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.StringJoiner;
 
 @RestControllerAdvice
-@Slf4j
+@Log4j2
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

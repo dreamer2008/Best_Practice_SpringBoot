@@ -5,11 +5,10 @@ import com.tom.bp.springboot.jpa.dto.response.base.Result;
 import com.tom.bp.springboot.jpa.service.EmployeeService;
 import com.tom.bp.springboot.jpa.validate.EmployeeAddGroup;
 import com.tom.bp.springboot.jpa.validate.EmployeeUpdateGroup;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
-@Slf4j
+@Log4j2
 public class EmployeeController {
 
     private final EmployeeService employeeService;
