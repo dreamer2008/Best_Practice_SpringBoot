@@ -80,6 +80,4 @@ Clone the repository to your local machine.
    * Using Hibernate Validator to validate the request data.
 
 3. Testing
-    * Using JUnit 5 and Mockito to write the unit tests.
-    * Using Spring Boot Test to write the integration tests.
-    
+    * Using JUnit 5 and Mockito and Spring Boot Test to test the application.
