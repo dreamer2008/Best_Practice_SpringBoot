@@ -40,7 +40,7 @@ Clone the repository to your local machine.
    ```
 3. The documentation with Swagger UI is available at the following URL.
    ```
-   http://{$YOUR_HOST}:18080/swagger-ui/index.html
+   http://{$YOUR_HOST}:8080/swagger-ui/index.html
    ```
    
 ## Run on Cloud Platforms
