@@ -3,13 +3,11 @@ package com.tom.bp.springboot.jpa.service.impl;
 import com.tom.bp.springboot.jpa.dao.EmployeeDao;
 import com.tom.bp.springboot.jpa.dto.EmployeeDTO;
 import com.tom.bp.springboot.jpa.exception.ResourceNotFoundException;
+import com.tom.bp.springboot.jpa.mapper.EmployeeMapper;
 import com.tom.bp.springboot.jpa.model.Employee;
 import com.tom.bp.springboot.jpa.service.EmployeeService;
 import com.tom.bp.springboot.jpa.util.JpaUtil;
-import com.tom.bp.springboot.jpa.mapper.Mapper;
 import com.tom.bp.springboot.jpa.util.enums.EnumState;
-import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,12 +19,13 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final EmployeeDao employeeDao;
+    @Autowired
+    private EmployeeDao employeeDao;
 
-    private final Mapper employeeMapper = Mapper.INSTANCE;
+    @Autowired
+    private EmployeeMapper employeeMapper;
 
 
     @Transactional
