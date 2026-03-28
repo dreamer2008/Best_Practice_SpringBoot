@@ -1,76 +1,57 @@
 package com.tom.bp.springboot.jpa.exception;
 
+import com.tom.bp.springboot.jpa.dto.EmployeeDTO;
 import com.tom.bp.springboot.jpa.dto.response.base.Result;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+import org.springframework.core.MethodParameter;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
+@SuppressWarnings("null")
 class GlobalExceptionHandlerTest {
 
-    private GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
+    private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
     @Test
-    void methodArgumentNotValidExceptionReturnsBadRequestWithAllErrors() {
-        BindingResult bindingResult = mock(BindingResult.class);
-        List<ObjectError> errors = Arrays.asList(
-                new ObjectError("field1", "error1"),
-                new ObjectError("field2", "error2")
+    void handleShouldAggregateValidationMessages() throws NoSuchMethodException {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new EmployeeDTO(), "employeeDTO");
+        bindingResult.addError(new FieldError("employeeDTO", "firstName", "first name could not be empty"));
+        bindingResult.addError(new FieldError("employeeDTO", "email", "email could not be empty"));
+        MethodParameter parameter = new MethodParameter(
+                TestController.class.getDeclaredMethod("create", EmployeeDTO.class),
+                0
         );
-        when(bindingResult.getAllErrors()).thenReturn(errors);
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(parameter, bindingResult);
 
-        MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
+        Result<?> result = handler.handle(exception);
 
-        Result<?> result = exceptionHandler.handle(ex);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getCode());
-        assertEquals("error1;error2", result.getMessage());
+        assertThat(result.getCode()).isEqualTo(400);
+        assertThat(result.getMessage()).contains("first name could not be empty");
+        assertThat(result.getMessage()).contains("email could not be empty");
     }
 
     @Test
-    void resourceNotFoundExceptionReturnsNotFoundStatus() {
-        String message = "Resource not found";
-        ResourceNotFoundException ex = new ResourceNotFoundException(message);
+    void handleResourceNotFoundExceptionShouldReturnNotFoundResult() {
+        Result<?> result = handler.handleResourceNotFoundException(new ResourceNotFoundException("missing employee"));
 
-        Result<?> result = exceptionHandler.handleResourceNotFoundException(ex);
-
-        assertEquals(HttpStatus.NOT_FOUND.value(), result.getCode());
-        assertEquals(message, result.getMessage());
+        assertThat(result.getCode()).isEqualTo(404);
+        assertThat(result.getMessage()).isEqualTo("missing employee");
+        assertThat(result.getData()).isNull();
     }
 
     @Test
-    void generalExceptionReturnsInternalServerError() {
-        String message = "Unexpected error";
-        Exception ex = new RuntimeException(message);
+    void handleExceptionShouldReturnInternalServerErrorResult() {
+        Result<String> result = handler.handleException(new IllegalStateException("boom"));
 
-        Result<String> result = exceptionHandler.handleException(ex);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), result.getCode());
-        assertEquals(message, result.getMessage());
+        assertThat(result.getCode()).isEqualTo(500);
+        assertThat(result.getMessage()).isEqualTo("boom");
     }
 
-    @Test
-    void emptyValidationErrorReturnsEmptyMessage() {
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.getAllErrors()).thenReturn(Collections.emptyList());
-
-        MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
-
-        Result<?> result = exceptionHandler.handle(ex);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getCode());
-        assertEquals("", result.getMessage());
+    static class TestController {
+        void create(EmployeeDTO employeeDTO) {
+        }
     }
 }

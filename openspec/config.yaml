@@ -1,20 +1,45 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Tech stack: Spring Boot 3.5.12, Java 21, Maven 3.8.1
+  Core: spring-boot-starter-data-jpa, spring-boot-starter-web, spring-boot-starter-validation
+  Security: spring-boot-starter-security (disabled via exclusion)
+  API docs: springdoc-openapi-starter-webmvc-ui 2.8.16
+  Mapping: MapStruct 1.5.5.Final (Spring component model)
+  Logging: Log4j2 (excluded default logback), @Log4j2 per class
+  Lombok: 1.18.36 (@Data, @Builder, @Accessors(chain=true))
+  Database: MySQL 8+ (HikariCP pool, max 10), Hibernate ddl-auto=update
+  Testing: JUnit Jupiter 5.12.2, Spring Boot Test, JaCoCo 0.8.14
+  
+  Architecture: single-module REST API (Employee CRUD)
+  Package: com.tom.bp.springboot.jpa with layer separation
+    - controller/ (1 RestController, /api/employees)
+    - service/ (interface + impl, @Transactional)
+    - dao/ (JpaRepository)
+    - model/ (JPA @Entity with fluent setters)
+    - dto/ (EmployeeDTO with group-based validation)
+    - mapper/ (MapStruct interface)
+    - exception/ (GlobalExceptionHandler @RestControllerAdvice, ResourceNotFoundException)
+    - validate/ (EmployeeAddGroup, EmployeeUpdateGroup marker interfaces)
+    - dto/response/base/ (Result<T> generic wrapper)
+  
+  Conventions:
+    - Response wrapping: Result<T> with static factory methods (success/fail)
+    - Validation: group-based @Validated({GroupClass.class})
+    - Code style: fluent chaining, Lombok annotations, @Autowired field injection
+    - Commits: conventional commits preferred
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - Keep proposals concise (under 500 words)
+    - Always include impact on existing tests
+  design:
+    - Reference specific Spring Boot / JUnit 5 APIs and annotations
+    - Include code snippets for key patterns
+  specs:
+    - Define testable acceptance criteria
+    - Reference specific test class names and methods
+  tasks:
+    - Break tasks into chunks of max 2 hours
+    - Each task should be independently verifiable with mvn test
+    - Order tasks to allow incremental testing

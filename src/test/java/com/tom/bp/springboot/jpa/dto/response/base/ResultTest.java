@@ -1,87 +1,64 @@
 package com.tom.bp.springboot.jpa.dto.response.base;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
 class ResultTest {
 
     @Test
-    void successReturnsResultWithOkStatusAndData() {
-        String data = "test data";
-        Result<String> result = Result.success(data);
+    void successShouldUseDefaultOkMetadata() {
+        Result<String> result = Result.success("payload");
 
-        assertEquals(HttpStatus.OK.value(), result.getCode());
-        assertEquals("Success", result.getMessage());
-        assertEquals(data, result.getData());
+        assertThat(result.getCode()).isEqualTo(200);
+        assertThat(result.getMessage()).isEqualTo("Success");
+        assertThat(result.getData()).isEqualTo("payload");
     }
 
     @Test
-    void successWithoutDataReturnsResultWithOkStatus() {
-        Result<Object> result = Result.success();
+    void successWithoutDataShouldReturnEmptyPayload() {
+        Result<Void> result = Result.success();
 
-        assertEquals(HttpStatus.OK.value(), result.getCode());
-        assertEquals("Success", result.getMessage());
-        assertNull(result.getData());
+        assertThat(result.getCode()).isEqualTo(200);
+        assertThat(result.getMessage()).isEqualTo("Success");
+        assertThat(result.getData()).isNull();
     }
 
     @Test
-    void successWithCustomValuesReturnsResultWithProvidedValues() {
-        Integer code = 201;
-        String message = "Created";
-        String data = "test data";
+    void successShouldSupportExplicitMetadata() {
+        Result<String> result = Result.success(201, "Created", "payload");
 
-        Result<String> result = Result.success(code, message, data);
-
-        assertEquals(code, result.getCode());
-        assertEquals(message, result.getMessage());
-        assertEquals(data, result.getData());
+        assertThat(result.getCode()).isEqualTo(201);
+        assertThat(result.getMessage()).isEqualTo("Created");
+        assertThat(result.getData()).isEqualTo("payload");
     }
 
     @Test
-    void failReturnsResultWithProvidedErrorValues() {
-        Integer code = 404;
-        String message = "Not Found";
+    void failShouldSupportOptionalPayload() {
+        Result<String> result = Result.fail(400, "Bad Request", "details");
+        Result<Object> noPayload = Result.fail(500, "Boom");
 
-        Result<Object> result = Result.fail(code, message);
-
-        assertEquals(code, result.getCode());
-        assertEquals(message, result.getMessage());
-        assertNull(result.getData());
+        assertThat(result.getCode()).isEqualTo(400);
+        assertThat(result.getMessage()).isEqualTo("Bad Request");
+        assertThat(result.getData()).isEqualTo("details");
+        assertThat(noPayload.getCode()).isEqualTo(500);
+        assertThat(noPayload.getMessage()).isEqualTo("Boom");
+        assertThat(noPayload.getData()).isNull();
     }
 
     @Test
-    void failWithDataReturnsResultWithProvidedErrorValuesAndData() {
-        Integer code = 400;
-        String message = "Bad Request";
-        String data = "error details";
-
-        Result<String> result = Result.fail(code, message, data);
-
-        assertEquals(code, result.getCode());
-        assertEquals(message, result.getMessage());
-        assertEquals(data, result.getData());
-    }
-
-    @Test
-    void builderCreatesResultWithAllValues() {
-        Integer code = 200;
-        String message = "Test";
-        String data = "test data";
-
-        Result<String> result = Result.<String>builder()
-                .code(code)
-                .message(message)
-                .data(data)
+    void constructorsAndBuilderShouldPopulateFields() {
+        Result<String> constructed = new Result<>(202, "Accepted", "value");
+        Result<String> built = Result.<String>builder()
+                .code(204)
+                .message("No Content")
+                .data(null)
                 .build();
 
-        assertEquals(code, result.getCode());
-        assertEquals(message, result.getMessage());
-        assertEquals(data, result.getData());
+        assertThat(constructed.getCode()).isEqualTo(202);
+        assertThat(constructed.getMessage()).isEqualTo("Accepted");
+        assertThat(constructed.getData()).isEqualTo("value");
+        assertThat(built.getCode()).isEqualTo(204);
+        assertThat(built.getMessage()).isEqualTo("No Content");
     }
 }

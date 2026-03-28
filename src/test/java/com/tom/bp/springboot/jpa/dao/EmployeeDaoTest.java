@@ -1,32 +1,59 @@
 package com.tom.bp.springboot.jpa.dao;
 
 import com.tom.bp.springboot.jpa.model.Employee;
-import com.tom.bp.springboot.jpa.util.enums.EnumState;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Date;
-import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class EmployeeDaoTest {
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@SuppressWarnings("null")
+class EmployeeDaoTest {
 
     @Autowired
     private EmployeeDao employeeDao;
 
     @Test
-    void testSaveAndRetrieveEmployee() {
+    void saveShouldPersistAndFindEmployee() {
+        Employee employee = employee("Alice", "Walker", "alice.walker@example.com");
+
+        Employee persisted = employeeDao.save(employee);
+
+        assertThat(persisted.getId()).isNotNull();
+        assertThat(employeeDao.findById(persisted.getId()))
+                .get()
+                .extracting(Employee::getEmail, Employee::getFirstName)
+                .containsExactly("alice.walker@example.com", "Alice");
+    }
+
+    @Test
+    void findAllShouldSupportPaging() {
+        employeeDao.save(employee("Tom", "A", "tom.a@example.com"));
+        employeeDao.save(employee("Tom", "B", "tom.b@example.com"));
+
+        Page<Employee> page = employeeDao.findAll(PageRequest.of(0, 10));
+
+        assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(2);
+        assertThat(page.getContent())
+                .extracting(Employee::getEmail)
+                .contains("tom.a@example.com", "tom.b@example.com");
+    }
+
+    private static Employee employee(String firstName, String lastName, String email) {
         Date now = new Date();
-        Employee employee = new Employee(null, "Mark", "Smith", "mark.smith@example.com", EnumState.VALID.ordinal(), now, now);
-        employee = employeeDao.save(employee);
-        Optional<Employee> foundEmployee = employeeDao.findById(employee.getId());
-        assertThat(foundEmployee).isPresent();
-        assertThat(foundEmployee.get().getFirstName()).isEqualTo("Mark");
-        assertThat(foundEmployee.get().getLastName()).isEqualTo("Smith");
+        return new Employee()
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setEmail(email)
+                .setState(1)
+                .setCreatedAt(now)
+                .setUpdateAt(now);
     }
 }
