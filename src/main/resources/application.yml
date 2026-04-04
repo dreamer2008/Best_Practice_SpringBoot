@@ -1,0 +1,66 @@
+server:
+  port: ${port:8080}
+
+spring:
+  application:
+    name: '@project.artifactId@'
+  #output:
+  #  ansi:
+  #    enabled: always
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/platform?useUnicode=true&characterEncoding=utf-8&createDatabaseIfNotExist=true
+    username: root
+    password: 1qazxsw2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: hikari-platform-service-platform
+      connection-test-query: SELECT 1
+      maximum-pool-size: 10
+      max-lifetime: 600000
+    # PostgreSQL
+    #driver-class-name: org.postgresql.Driver
+    #url: jdbc:postgresql://localhost:5432/platform?useSSL=false
+    #username: postgres
+    #password: admin1234
+  jpa:
+    database: MYSQL
+    # database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true
+        #dialect: org.hibernate.dialect.MySQLDialect
+        #dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    user:
+      name: admin
+      password: admin123456
+  #sql:
+  #  init:
+  #    mode: always
+
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+  config: classpath:log4j2-spring.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  show-actuator: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

@@ -8,13 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Date;
 
-@SpringBootApplication(exclude = {
-        SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
-//@EnableWebSecurity
+@SpringBootApplication
+@EnableWebSecurity
 @EnableTransactionManagement
 public class Application {
 
